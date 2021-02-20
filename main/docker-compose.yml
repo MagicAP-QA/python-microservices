@@ -65,4 +65,9 @@ services:
       - .dbdata_admin:/var/lib/mysql
     ports:
       - 33066:3306
-
+      
+  redis:
+    image: redis
+    container_name: cache
+    expose:
+      - 6379

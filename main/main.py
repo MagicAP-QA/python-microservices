@@ -4,6 +4,8 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import UniqueConstraint
 import requests
+import redis
+import json 
 
 from producer import publish
 
@@ -12,7 +14,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql://root:root@db_main/main'
 CORS(app)
 
 db = SQLAlchemy(app)
-
+redis_instance = redis.StrictRedis(host='redis',port=6379, db=0)
 
 @dataclass
 class Product(db.Model):
@@ -36,7 +38,7 @@ class ProductUser(db.Model):
 
 @app.route('/api/products')
 def index():
-    return jsonify(Product.query.all())
+    return jsonify(json.loads(redis_instance.get("products_list")))
 
 
 @app.route('/api/products/<int:id>/like', methods=['POST'])

@@ -6,12 +6,22 @@ from .models import Product, User
 from .producer import publish
 from .serializers import ProductSerializer
 import random
+import redis
+import requests
+import json
+
+redis_instance = redis.StrictRedis(host='redis',port=6379, db=0)
 
 
 class ProductViewSet(viewsets.ViewSet):
-    def list(self, request):
+    def list(self, request=None, redis_cache=True):
+        if redis_cache:
+            print("Fetching from redis")
+            return Response(json.loads(redis_instance.get("products_list")))
+        print("Fetching from database")
         products = Product.objects.all()
         serializer = ProductSerializer(products, many=True)
+
         return Response(serializer.data)
 
     def create(self, request):
@@ -19,6 +29,8 @@ class ProductViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         publish('product_created', serializer.data)
+        json_list = self.list(redis_cache=False)
+        redis_instance.set("products_list", json.dumps(json_list.data))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def retrieve(self, request, pk=None):
