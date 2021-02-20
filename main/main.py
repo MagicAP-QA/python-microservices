@@ -1,54 +1,35 @@
-from dataclasses import dataclass
+from bson.objectid import ObjectId
 from flask import Flask, jsonify, abort
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import UniqueConstraint
+from flask_pymongo import PyMongo
 import requests
-
+from bson import json_util
 from producer import publish
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql://root:root@db_main/main'
+app.config["MONGO_URI"] = "mongodb://mongo:27017/main"
 CORS(app)
 
-db = SQLAlchemy(app)
-
-
-@dataclass
-class Product(db.Model):
-    id: int
-    title: str
-    image: str
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    title = db.Column(db.String(200))
-    image = db.Column(db.String(200))
-
-
-@dataclass
-class ProductUser(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer)
-    product_id = db.Column(db.Integer)
-
-    UniqueConstraint('user_id', 'product_id', name='user_product_unique')
-
+mongo = PyMongo(app)
 
 @app.route('/api/products')
 def index():
-    return jsonify(Product.query.all())
+    data = mongo.db.product.find({})
+    dd = json_util.dumps(data)
+    print(dd)
+    return dd
 
 
-@app.route('/api/products/<int:id>/like', methods=['POST'])
+@app.route('/api/products/<string:id>/like', methods=['POST'])
 def like(id):
     req = requests.get('http://backendadmin:8000/api/user')
     json = req.json()
-
+    
     try:
-        productUser = ProductUser(user_id=json['id'], product_id=id)
-        db.session.add(productUser)
-        db.session.commit()
-
+        productUser = mongo.db.product_user.find({"_id":ObjectId(id)})
+        # db.session.add(productUser)
+        # db.session.commit()
+        print(productUser)
         publish('product_liked', id)
     except:
         abort(400, 'You already liked this product')

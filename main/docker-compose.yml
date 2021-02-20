@@ -66,3 +66,13 @@ services:
     ports:
       - 33066:3306
 
+  mongo:
+    image: mongo:3.6
+    ports:
+      - "2700:27017"
+      - "2701:28017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
