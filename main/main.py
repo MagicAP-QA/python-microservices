@@ -8,7 +8,7 @@ import requests
 from producer import publish
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql://root:root@db/main'
+app.config["SQLALCHEMY_DATABASE_URI"] = 'mysql://root:root@db_main/main'
 CORS(app)
 
 db = SQLAlchemy(app)
@@ -41,7 +41,7 @@ def index():
 
 @app.route('/api/products/<int:id>/like', methods=['POST'])
 def like(id):
-    req = requests.get('http://docker.for.mac.localhost:8000/api/user')
+    req = requests.get('http://backendadmin:8000/api/user')
     json = req.json()
 
     try:

@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  backend:
+  backend_main:
     build:
       context: .
       dockerfile: Dockerfile
@@ -10,17 +10,17 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db
+      - db_main
 
-  queue:
+  queue_main:
     build:
       context: .
       dockerfile: Dockerfile
     command: 'python -u consumer.py'
     depends_on:
-      - db
+      - db_main
 
-  db:
+  db_main:
     image: mysql:5.7.22
     restart: always
     environment:
@@ -32,3 +32,37 @@ services:
       - .dbdata:/var/lib/mysql
     ports:
       - 33067:3306
+      
+  backendadmin:
+    build:
+      context: ../admin
+      dockerfile: Dockerfile
+    command: 'python manage.py runserver 0.0.0.0:8000'
+    ports:
+      - 8000:8000
+    volumes:
+      - ../admin/.:/app
+    depends_on:
+      - db
+
+  queue_admin:
+    build:
+      context: ../admin
+      dockerfile: Dockerfile
+    command: 'python -u consumer.py'
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7.22
+    restart: always
+    environment:
+      MYSQL_DATABASE: admin
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - .dbdata_admin:/var/lib/mysql
+    ports:
+      - 33066:3306
+
