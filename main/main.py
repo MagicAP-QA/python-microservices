@@ -166,7 +166,6 @@ def start_prod_server(host, port):
     }
     StandaloneApplication(app, options).run()
 
-
-if __name__ == '__main__':
+def runapp():
     start_prod_server(host='0.0.0.0', port=5000)
     # app.run(host='0.0.0.0', port=5000, debug=False)
