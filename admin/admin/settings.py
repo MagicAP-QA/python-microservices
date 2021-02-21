@@ -24,7 +24,7 @@ SECRET_KEY = 'jr_!&njk1=$yoehd$)2tg8jouv!ig5wrrw%ka_-vjj@1as1bv@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["backendadmin", "localhost", "acm-web_mongo_1", "127.0.0.1"]
+ALLOWED_HOSTS = ["backendadmin", "localhost", "cache", "acm-web_mongo_1", "127.0.0.1"]
 
 # Application definition
 

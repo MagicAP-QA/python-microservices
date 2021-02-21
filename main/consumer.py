@@ -19,8 +19,9 @@ def callback(ch, method, properties, body):
     print(data)
 
     if properties.content_type == 'product_created':
-        # qry = {"_id": ObjectId(data['id']), "title": data['title'], "image": data['image']}
-        qry = {"_id": data['id'], "title": data['title'], "image": data['image']}
+        print("=====================****************")
+        print(data)
+        qry = {"title": data['title'], "image": data['image']}
         result = mongo.db.product.insert_one(qry)
         print(f'Product Created with id: {result.inserted_id}')
 

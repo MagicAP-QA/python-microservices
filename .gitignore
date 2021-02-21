@@ -7,3 +7,9 @@ main/.dbdata/
 __pycache__/
 *.py[cod]
 **/__pycache__
+main/__pycache__/
+admin/admin/__pycache__
+*.log
+*.db
+main/.dbdata_admin
+admin/.dbdata_admin

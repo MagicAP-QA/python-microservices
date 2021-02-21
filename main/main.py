@@ -20,7 +20,9 @@ from flask import session
 from flask import url_for
 from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
-
+import requests
+import redis
+import json 
 import constants
 
 ENV_FILE = find_dotenv()
@@ -42,6 +44,7 @@ CORS(app)
 
 mongo = PyMongo(app)
 
+redis_instance = redis.StrictRedis(host='localhost',port=6379, db=0)
 
 @app.errorhandler(Exception)
 def handle_auth_error(ex):
@@ -74,14 +77,12 @@ def requires_auth(f):
 
     return decorated
 
-
-
 @app.route('/api/products')
 def index():
-    data = mongo.db.product.find({})
-    dd = json_util.dumps(data)
-    print(dd)
-    return dd
+    # data = mongo.db.product.find({})
+    # dd = json_util.dumps(data)
+    data = redis_instance.get("products_list")
+    return jsonify(data)
 
 @app.route('/')
 def home():
