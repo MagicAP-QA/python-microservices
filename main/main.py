@@ -24,6 +24,9 @@ import requests
 import redis
 import json 
 import constants
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
 
 ENV_FILE = find_dotenv()
 if ENV_FILE:
@@ -79,10 +82,8 @@ def requires_auth(f):
 
 @app.route('/api/products')
 def index():
-    data = mongo.db.product.find({})
-    # dd = json_util.dumps(data)
-    # data = redis_instance.get("products_list")
-    return jsonify(data)
+    data = redis_instance.get("products_list")
+    return jsonify(json.loads(data))
 
 @app.route('/')
 def home():
@@ -139,5 +140,32 @@ def dashboard():
                            userinfo=session[constants.PROFILE_KEY],
                            userinfo_pretty=json.dumps(session[constants.JWT_PAYLOAD], indent=4))
 
+def start_prod_server(host, port):
+    # number_of_workers = (multiprocessing.cpu_count() * 2) + 1
+    from gunicorn.app.base import BaseApplication
+
+    class StandaloneApplication(BaseApplication):
+        def __init__(self, app, options=None):
+            self.options = options or {}
+            self.application = app
+            super().__init__()
+
+        def load_config(self):
+            config = {key: value for key, value in self.options.items()
+                      if key in self.cfg.settings and value is not None}
+            for key, value in config.items():
+                self.cfg.set(key.lower(), value)
+
+        def load(self):
+            return self.application
+
+    options = {
+        'bind': '%s:%s' % (host, port),
+        'workers': 3,
+        'threads': 3
+    }
+    StandaloneApplication(app, options).run()
+
+
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    start_prod_server(host='0.0.0.0', port=5000)
