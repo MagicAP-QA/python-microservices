@@ -6,6 +6,9 @@ from .models import Product, User
 from .producer import publish
 from .serializers import ProductSerializer
 import random
+import redis
+
+redis_instance = redis.StrictRedis(host='localhost',port=6379, db=0)
 
 
 class ProductViewSet(viewsets.ViewSet):
