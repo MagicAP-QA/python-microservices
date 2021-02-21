@@ -19,12 +19,16 @@ class ProductViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         publish('product_created', serializer.data)
+        redis_instance.set("products_list", retrieve(self, request, pk=None, redis_cache=true ))
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    def retrieve(self, request, pk=None):
-        product = Product.objects.get(id=pk)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
+    def retrieve(self, request, pk=None, redis_cache):
+        if(redis_cache):
+            return Response(redis_instance.get("products_list"))
+        else:
+            product = Product.objects.get(id=pk)
+            serializer = ProductSerializer(product)
+            return Response(serializer.data)
 
     def update(self, request, pk=None):
         product = Product.objects.get(id=pk)
