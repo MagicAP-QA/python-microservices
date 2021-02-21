@@ -1,7 +1,9 @@
+from bson.objectid import ObjectId
 import pika, json
 
-from main import Product, db
+from main import mongo
 
+#TODO change to local
 params = pika.URLParameters('amqps://abrurlec:NVuz1ApXob9L6STGkhhR27pHCplBzcWQ@eagle.rmq.cloudamqp.com/abrurlec')
 
 connection = pika.BlockingConnection(params)
@@ -17,22 +19,22 @@ def callback(ch, method, properties, body):
     print(data)
 
     if properties.content_type == 'product_created':
-        product = Product(id=data['id'], title=data['title'], image=data['image'])
-        db.session.add(product)
-        db.session.commit()
-        print('Product Created')
+        # qry = {"_id": ObjectId(data['id']), "title": data['title'], "image": data['image']}
+        qry = {"_id": data['id'], "title": data['title'], "image": data['image']}
+        result = mongo.db.product.insert_one(qry)
+        print(f'Product Created with id: {result.inserted_id}')
 
     elif properties.content_type == 'product_updated':
-        product = Product.query.get(data['id'])
-        product.title = data['title']
-        product.image = data['image']
-        db.session.commit()
+        # qry = {"_id": ObjectId(data['id'])}
+        qry = {"_id": data['id']}
+        newvalues = { "$set": { "title": data['title'],  'image': data['image']} }
+        mongo.db.product.update_one(qry, newvalues)        
         print('Product Updated')
 
     elif properties.content_type == 'product_deleted':
-        product = Product.query.get(data)
-        db.session.delete(product)
-        db.session.commit()
+        # qry = {"_id": ObjectId(data['id'])}
+        qry = {"_id": data['id']}
+        mongo.db.product.delete_one(qry)        
         print('Product Deleted')
 
 

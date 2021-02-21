@@ -93,10 +93,10 @@ def like(id):
     json = req.json()
     
     try:
-        productUser = mongo.db.product_user.find({"_id":ObjectId(id)})
-        # db.session.add(productUser)
-        # db.session.commit()
-        print(productUser)
+        # productUser = {"user_id": ObjectId(json["id"]), "product_id":ObjectId(id)}
+        productUser = {"user_id": json["id"], "product_id":id}
+        result = mongo.db.product_user.insert_one(productUser)
+        print(result.inserted_id)
         publish('product_liked', id)
     except:
         abort(400, 'You already liked this product')

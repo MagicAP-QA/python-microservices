@@ -10,7 +10,7 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - db_main
+      - mongo
 
   queue_main:
     build:
@@ -18,20 +18,20 @@ services:
       dockerfile: Dockerfile
     command: 'python -u consumer.py'
     depends_on:
-      - db_main
+      - mongo
 
-  db_main:
-    image: mysql:5.7.22
-    restart: always
-    environment:
-      MYSQL_DATABASE: main
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - .dbdata:/var/lib/mysql
-    ports:
-      - 33067:3306
+  # db_main:
+  #   image: mysql:5.7.22
+  #   restart: always
+  #   environment:
+  #     MYSQL_DATABASE: main
+  #     MYSQL_USER: root
+  #     MYSQL_PASSWORD: root
+  #     MYSQL_ROOT_PASSWORD: root
+  #   volumes:
+  #     - .dbdata:/var/lib/mysql
+  #   ports:
+  #     - 33067:3306
       
   backendadmin:
     build:
@@ -43,7 +43,7 @@ services:
     volumes:
       - ../admin/.:/app
     depends_on:
-      - db
+      - mongo
 
   queue_admin:
     build:
@@ -51,20 +51,20 @@ services:
       dockerfile: Dockerfile
     command: 'python -u consumer.py'
     depends_on:
-      - db
+      - mongo
 
-  db:
-    image: mysql:5.7.22
-    restart: always
-    environment:
-      MYSQL_DATABASE: admin
-      MYSQL_USER: root
-      MYSQL_PASSWORD: root
-      MYSQL_ROOT_PASSWORD: root
-    volumes:
-      - .dbdata_admin:/var/lib/mysql
-    ports:
-      - 33066:3306
+  # db:
+  #   image: mysql:5.7.22
+  #   restart: always
+  #   environment:
+  #     MYSQL_DATABASE: admin
+  #     MYSQL_USER: root
+  #     MYSQL_PASSWORD: root
+  #     MYSQL_ROOT_PASSWORD: root
+  #   volumes:
+  #     - .dbdata_admin:/var/lib/mysql
+  #   ports:
+  #     - 33066:3306
 
   mongo:
     image: mongo:3.6

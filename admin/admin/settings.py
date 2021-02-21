@@ -24,7 +24,7 @@ SECRET_KEY = 'jr_!&njk1=$yoehd$)2tg8jouv!ig5wrrw%ka_-vjj@1as1bv@'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["backendadmin","localhost"]
+ALLOWED_HOSTS = ["backendadmin", "localhost", "acm-web_mongo_1", "127.0.0.1"]
 
 # Application definition
 
@@ -76,14 +76,13 @@ WSGI_APPLICATION = 'admin.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'djongo',
         'NAME': 'admin',
-        'USER': 'root',
-        'PASSWORD': 'root',
-        'HOST': 'db',
-        'PORT': '3306',
+        'HOST': 'acm-web_mongo_1',
+        'PORT': 2700,
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
