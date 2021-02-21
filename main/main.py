@@ -37,7 +37,7 @@ AUTH0_AUDIENCE = env.get(constants.AUTH0_AUDIENCE)
 app = Flask(__name__, static_url_path='/public', static_folder='./public')
 app.secret_key = constants.SECRET_KEY
 app.debug = True
-app.config["MONGO_URI"] = "mongodb://mongo:27017/main"
+app.config["MONGO_URI"] = "mongodb://localhost:27017/main"
 CORS(app)
 
 mongo = PyMongo(app)
@@ -89,7 +89,7 @@ def home():
 
 @app.route('/api/products/<string:id>/like', methods=['POST'])
 def like(id):
-    req = requests.get('http://backendadmin:8000/api/user')
+    req = requests.get('http://localhost:8000/api/user')
     json = req.json()
     
     try:

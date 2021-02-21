@@ -1,0 +1,9 @@
+.vscode/
+mcenv/
+admin/.dbdata/
+main/.dbdata/
+*.pyc
+**/*.pyc
+__pycache__/
+*.py[cod]
+**/__pycache__
