@@ -79,9 +79,9 @@ def requires_auth(f):
 
 @app.route('/api/products')
 def index():
-    # data = mongo.db.product.find({})
+    data = mongo.db.product.find({})
     # dd = json_util.dumps(data)
-    data = redis_instance.get("products_list")
+    # data = redis_instance.get("products_list")
     return jsonify(data)
 
 @app.route('/')
