@@ -32,7 +32,7 @@ ENV_FILE = find_dotenv()
 if ENV_FILE:
     load_dotenv(ENV_FILE)
 
-AUTH0_CALLBACK_URL = "http://localhost:8001/callback"
+AUTH0_CALLBACK_URL = "http://localhost:5000/callback"
 AUTH0_CLIENT_ID = "o6jb3XdJkT4DYlgGe9B58MbwCBNp7Hfg"
 AUTH0_CLIENT_SECRET = "xM8oEUTfGFscNk_Rw0njEkyYLpFQLpq9JKWbwhkOd6ISPbgsl6KWDNLNyKztc244"
 AUTH0_DOMAIN = "dev-yc8qs3eb.auth0.com"
@@ -169,3 +169,4 @@ def start_prod_server(host, port):
 
 if __name__ == '__main__':
     start_prod_server(host='0.0.0.0', port=5000)
+    # app.run(host='0.0.0.0', port=5000, debug=False)
